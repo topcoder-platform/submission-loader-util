@@ -1,0 +1,24 @@
+{
+  "name": "submission-loader-util",
+  "version": "1.0.0",
+  "description": "submission and review bulk loader for topcoder",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/topcoder-platform/submission-loader-util.git"
+  },
+  "author": "CWD <lazybaer@topcoder.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/topcoder-platform/submission-loader-util/issues"
+  },
+  "homepage": "https://github.com/topcoder-platform/submission-loader-util#readme",
+  "dependencies": {
+    "@topcoder-platform/topcoder-submission-api-wrapper": "^1.2.0",
+    "config": "^3.3.1",
+    "lodash": "^4.17.20"
+  }
+}
