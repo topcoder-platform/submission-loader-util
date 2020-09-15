@@ -1,5 +1,6 @@
 const _ = require('lodash')
 const config = require('config')
+const submissionApi = require('@topcoder-platform/topcoder-submission-api-wrapper')
 
 const submissionApiM2MClient = submissionApi(_.pick(config,
   ['AUTH0_URL', 'AUTH0_AUDIENCE', 'TOKEN_CACHE_TIME',
@@ -11,9 +12,9 @@ async function createSubs() {
   const type = 'Contest Submission'
   const submissions = new Array()
 
-  submissions[submissions.length] = { url: 'https://tc-test-submission-scan.s3.amazonaws.com/good.zip', memberId: 40493050, challengeId: 30054692}
+  submissions[submissions.length] = { url: 'https://tc-test-submission-scan.s3.amazonaws.com/good.zip', memberId: 23225544, challengeId: 30056738}
 
-  _.forEach(submissions, (s) => {
+  _.forEach(submissions, async (s) => {
     const url = s.url
 
     const sub = {
@@ -22,9 +23,14 @@ async function createSubs() {
       memberId: s.memberId,
       challengeId: s.challengeId
     }
+    try {
+      const rec = await submissionApiM2MClient.createSubmission(sub)
+      console.log(rec.body)
+    } catch (e) {
+      console.log(e)
+    }
+    
   })
-
-  await submissionApiM2MClient.createSubmission(sub)
 }
 
 createSubs()
