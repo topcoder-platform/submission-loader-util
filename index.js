@@ -8,41 +8,44 @@ const submissionApiM2MClient = submissionApi(_.pick(config,
     'AUTH0_CLIENT_ID', 'AUTH0_CLIENT_SECRET', 'SUBMISSION_API_URL',
     'AUTH0_PROXY_SERVER_URL']))
 
-async function createSubs() {
-
+async function createSubs () {
   const type = 'Contest Submission'
   const submissions = new Array()
 
   try {
-    const challengesFile = await fs.readFile(config.FILE_CHALLENGES)
+    const challengesFile = await fs.readFile(`./data/${config.FILE_CHALLENGES}`)
     const data = JSON.parse(challengesFile.toString())
-console.log(JSON.stringify(data.challenges[0],null," "))
-/*
-    _.forEach(data.challenges, async (c) => {
-      //{ url: 'https://tc-test-submission-scan.s3.amazonaws.com/good.zip', memberId: 23225544, challengeId: 30056738 }
+    console.log(JSON.stringify(data.challenges[0], null, ' '))
 
+    _.forEach(data.challenges, async (c) => {
+      // { url: 'https://tc-test-submission-scan.s3.amazonaws.com/good.zip', memberId: 23225544, challengeId: 30056738 }
+      // 30141547&submissionId=397761
       _.forEach(c.submissions, async (s) => {
-        const url = s.url
-        const sub = {
-          url,
-          type,
-          memberId: s.memberId,
-          challengeId: s.challengeId
-        }
-        try {
-          const rec = await submissionApiM2MClient.createSubmission(sub)
-          console.log(rec.body)
-        } catch (e) {
-          console.log(e)
-        }
+        _.forEach(s.submissions, async (r) => {
+          const url = `https://${config.DOMAIN}/direct/contest/downloadSoftwareSubmission.action?projectId=${c.challengeId}&submissionId=${r.submissionId}`
+          const sub = {
+            url,
+            type,
+            memberId: s.submitterId,
+            challengeId: c.challengeId
+          }
+
+          console.log(sub)
+          /*
+          try {
+            // const rec = await submissionApiM2MClient.createSubmission(sub)
+            // creata review for sub
+            console.log(rec.body)
+          } catch (e) {
+            console.log(e)
+          }
+          */
         })
-  })
-*/
-  } catch(e) {
+      })
+    })
+  } catch (e) {
     console.log(e)
   }
-
-
 }
 
 createSubs()
