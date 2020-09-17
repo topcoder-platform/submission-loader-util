@@ -13,8 +13,21 @@ async function createSubs () {
   const submissions = new Array()
 
   try {
-    const challengesFile = await fs.readFile(`./data/${config.FILE_CHALLENGES}`)
+    const challengesFile = await fs.readFile(`./data/sample.json`) // await fs.readFile(`./data/${config.FILE_CHALLENGES}`)
     const data = JSON.parse(challengesFile.toString())
+    const reviewerId = config.REVIEWER_ID
+    const scoreCardId = config.SCORECARD_ID
+
+    const typeIdBody = await submissionApiM2MClient.searchReviewTypes({
+      page: 1,
+      perPage: 1,
+      name: 'Marathon Match Review',
+      isActive: true
+    }) // config.REVIEW_TYPE_ID 
+
+    const typeId = typeIdBody.body[0].id
+    const status = 'completed'
+    const testType = 'provisional'
     console.log(JSON.stringify(data.challenges[0], null, ' '))
 
     _.forEach(data.challenges, async (c) => {
@@ -31,15 +44,30 @@ async function createSubs () {
           }
 
           console.log(sub)
-          /*
+
           try {
-            // const rec = await submissionApiM2MClient.createSubmission(sub)
-            // creata review for sub
-            console.log(rec.body)
+            const recSub = await submissionApiM2MClient.createSubmission(sub)
+            console.log(recSub.body)
+
+            const review = {
+              score: s.finalScore,
+              reviewerId,
+              submissionId: recSub.id,
+              scoreCardId,
+              typeId,
+              status,
+              metadata: {
+                testType,
+                public: s,
+                private: {}
+              }
+            }
+            const recReview = await submissionApiM2MClient.createReview(review)
+            console.log(recReview.body)
+return
           } catch (e) {
             console.log(e)
           }
-          */
         })
       })
     })
