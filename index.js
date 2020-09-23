@@ -40,7 +40,8 @@ async function createSubs () {
             url,
             type,
             memberId: s.submitterId,
-            challengeId: c.challengeId
+            challengeId: c.challengeId,
+            submittedDate: r.submissionTime
           }
 
           console.log(sub)
@@ -50,9 +51,10 @@ async function createSubs () {
             console.log(recSub.body)
 
             const review = {
-              score: s.finalScore,
+              score: s.finalScore || 0.0,
               reviewerId,
               submissionId: recSub.id,
+              reviewedDate: r.submissionTime,
               scoreCardId,
               typeId,
               status,
@@ -63,10 +65,11 @@ async function createSubs () {
               }
             }
             const recReview = await submissionApiM2MClient.createReview(review)
-            console.log(recReview.body)
-return
+            console.log('review: ', recReview.body)
+
           } catch (e) {
-            console.log(e)
+            console.log('ERROR:')
+            console.log(e.text , (e.response && e.response.body) ,  e.message)
           }
         })
       })
