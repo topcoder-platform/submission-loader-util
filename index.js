@@ -53,7 +53,7 @@ async function createSubs () {
             const review = {
               score: s.finalScore || 0.0,
               reviewerId,
-              submissionId: recSub.id,
+              submissionId: recSub.body.id,
               reviewedDate: r.submissionTime,
               scoreCardId,
               typeId,
@@ -64,11 +64,18 @@ async function createSubs () {
                 private: {}
               }
             }
-            const recReview = await submissionApiM2MClient.createReview(review)
-            console.log('review: ', recReview.body)
+
+            try {
+              console.log(`posting review: ${JSON.stringify(review)}`)
+              const recReview = await submissionApiM2MClient.createReview(review)
+              console.log('review: ', recReview.body)
+            } catch (e) {
+              console.log('ERROR w/ Review:')
+              console.log(e.text, (e.response && e.response.body), e.message)
+            }
 
           } catch (e) {
-            console.log('ERROR:')
+            console.log('ERROR w/ submission:')
             console.log(e.text , (e.response && e.response.body) ,  e.message)
           }
         })
